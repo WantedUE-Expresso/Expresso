@@ -1,28 +1,34 @@
 #pragma once
 
-namespace Data
+#include "CoreMinimal.h"
+#include "DataStructures.generated.h"
+
+USTRUCT(BlueprintType, Atomic)
+struct UE_METAFACIAL_API FHttpPost
 {
-	USTRUCT(BlueprintType)
-	struct UE_METAFACIAL_API FHttpPayload
-	{
-		GENERATED_BODY()
+	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Key")
-		FString name;
-	
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-		TArray<float> scores;
-	};
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ClientKey")
+	FString id;
 
-	USTRUCT(BlueprintType)
-	struct UE_METAFACIAL_API FFacialData
-	{
-		GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Post")
+	FString base64Image;
+};
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HttpPayload")
-		FString name;
-	
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HttpPayload")
-		TArray<float> scores;
-	};
+USTRUCT(BlueprintType, Atomic)
+struct UE_METAFACIAL_API FHttpPayload
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Key")
+	FString name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ClientKey")
+	TArray<FString> keys;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TArray<float> scores;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	TArray<FString> base64Image;
 };
