@@ -252,3 +252,5 @@
 **/*.streamlit/secrets.toml
 # Log directory
 **/Log/
+UE_MetaFacial/Content/Metahumans/MHC_Player/Face/SKM_MHC_Player_FaceMesh.uasset
+UE_MetaFacial/Content/Metahumans/MHC_Player.uasset
