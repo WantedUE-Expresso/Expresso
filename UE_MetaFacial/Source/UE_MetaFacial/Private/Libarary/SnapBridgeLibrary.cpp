@@ -6,7 +6,7 @@ bool USnapBridgeLibrary::RunProcessAndWait(const FString& ExecPath, const FStrin
 {
 	OutReturnCode = -1;
 
-	const FString SnapDir = FPaths::Combine(FPaths::ProjectDir(), TEXT("Binaries/ThirdParty/SnapCam"));
+	const FString SnapDir = FPaths::Combine(FPaths::ProjectDir(), TEXT("ThirdParty/SnapCam"));
 	const FString SnapExe = FPaths::Combine(SnapDir, TEXT("SnapCam.exe"));
 
 	// 권장: Saved 폴더
