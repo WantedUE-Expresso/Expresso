@@ -93,6 +93,14 @@
 		{
 			"Name": "RemoteControl",
 			"Enabled": true
+		},
+		{
+			"Name": "MetaHumanRuntime",
+			"Enabled": true
+		},
+		{
+			"Name": "LiveLinkInputDevice",
+			"Enabled": true
 		}
 	]
 }
