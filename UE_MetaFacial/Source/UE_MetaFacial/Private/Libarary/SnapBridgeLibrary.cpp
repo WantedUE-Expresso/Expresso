@@ -9,6 +9,10 @@ bool USnapBridgeLibrary::RunProcessAndWait(const FString& ExecPath, const FStrin
 	const FString SnapDir = FPaths::Combine(FPaths::ProjectDir(), TEXT("ThirdParty/SnapCam"));
 	const FString SnapExe = FPaths::Combine(SnapDir, TEXT("SnapCam.exe"));
 
+	FString OldPath = FPlatformMisc::GetEnvironmentVariable(TEXT("PATH"));
+	FString NewPath = SnapDir + TEXT(";") + OldPath;
+	FPlatformMisc::SetEnvironmentVar(TEXT("PATH"), *NewPath);
+
 	// 권장: Saved 폴더
 	const FString OutAbs = FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir() / TEXT("Webcam/snap.png"));   
 	IFileManager::Get().MakeDirectory(*FPaths::GetPath(OutAbs), true);
@@ -16,6 +20,11 @@ bool USnapBridgeLibrary::RunProcessAndWait(const FString& ExecPath, const FStrin
 	const FString Args = FString::Printf(
 	TEXT("--device 0 --width 1280 --height 720 --warmup 2 --timeout_ms 2000 --out \"%s\""), *OutAbs);
 
+	
+
+
+
+	
 	FProcHandle Proc = FPlatformProcess::CreateProc(
 		*SnapExe, *Args,
 		/*Detached*/ false,
@@ -23,7 +32,7 @@ bool USnapBridgeLibrary::RunProcessAndWait(const FString& ExecPath, const FStrin
 		/*ReallyHidden*/ true,
 		/*OutPID*/ nullptr,
 		/*Priority*/ 0,
-		/*WorkingDir*/ WorkingDir.IsEmpty() ? nullptr : *WorkingDir,
+		/*WorkingDir*/ *SnapDir,
 		/*PipeWrite*/ nullptr,
 		/*PipeRead*/ nullptr);
 
