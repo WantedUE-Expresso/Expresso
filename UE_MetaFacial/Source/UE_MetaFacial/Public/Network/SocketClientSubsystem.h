@@ -23,11 +23,12 @@ enum class ESocketNetworkState : uint8
 	ConnectionError		UMETA(DisplayName = "Connection Error"),
 
 	// 게임 세션 확장 가능 상태들 (향후 추가 예정)
-	Authenticating		UMETA(DisplayName = "Authenticating"),
-	InLobby				UMETA(DisplayName = "In Lobby"),
-	InGame				UMETA(DisplayName = "In Game"),
-	GamePaused			UMETA(DisplayName = "Game Paused"),
-	GameFinished		UMETA(DisplayName = "Game Finished"),
+	Authenticating		UMETA(DisplayName = "Authenticating"),	// 내 ID 주기
+	GameStarted			UMETA(DisplayName = "In Lobby"),		// 상대 아이디 받기
+	RoundStarted		UMETA(DisplayName = "In Game"),			// 제시어 받기
+	Capturing			UMETA(DisplayName = "Capturing"),		// 이미지 주기
+	RoundFinished		UMETA(DisplayName = "Game Paused"),		// 라운드 결과 받기
+	GameFinished		UMETA(DisplayName = "Game Finished"),	// Disconnect
 
 	// 오류 상태들
 	AuthenticationFailed UMETA(DisplayName = "Authentication Failed"),

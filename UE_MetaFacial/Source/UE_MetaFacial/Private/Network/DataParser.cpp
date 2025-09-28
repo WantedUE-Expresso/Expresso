@@ -1,4 +1,6 @@
 #include "Network/DataParser.h"
+#include "Json.h"
+#include "JsonUtilities.h"
 
 DEFINE_LOG_CATEGORY(DataParserLog)
 
@@ -174,10 +176,10 @@ bool UDataParser::IsValidJsonArray(const FString& JsonString)
 	return FJsonSerializer::Deserialize(Reader, JsonArray);
 }
 
-TSharedPtr<FJsonObject> UDataParser::ParseJsonObject(const FString& JsonString)
+TSharedPtr<FJsonObject> UDataParser::ParseJsonObject(const FString& inJsonString)
 {
 	TSharedPtr<FJsonObject> JsonObject;
-	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(inJsonString);
 
 	if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
 	{
@@ -187,10 +189,10 @@ TSharedPtr<FJsonObject> UDataParser::ParseJsonObject(const FString& JsonString)
 	return nullptr;
 }
 
-TArray<TSharedPtr<FJsonValue>> UDataParser::ParseJsonArray(const FString& JsonString)
+TArray<TSharedPtr<FJsonValue>> UDataParser::ParseJsonArray(const FString& inJsonString)
 {
 	TArray<TSharedPtr<FJsonValue>> JsonArray;
-	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(inJsonString);
 
 	if (FJsonSerializer::Deserialize(Reader, JsonArray))
 	{
@@ -204,7 +206,7 @@ TArray<TSharedPtr<FJsonValue>> UDataParser::ParseJsonArray(const FString& JsonSt
 // Private Helper Functions
 // ========================================================================================
 
-bool UDataParser::SerializeStructToJson(const void* StructPtr, const UStruct* StructDef, FString& OutJsonString)
+bool UDataParser::SerializeStructToJson(const void* StructPtr, const UStruct* StructDef, FString& outJsonString)
 {
 	if (!StructPtr || !StructDef)
 	{
@@ -214,7 +216,7 @@ bool UDataParser::SerializeStructToJson(const void* StructPtr, const UStruct* St
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 	if (FJsonObjectConverter::UStructToJsonObject(StructDef, StructPtr, JsonObject.ToSharedRef()))
 	{
-		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutJsonString);
+		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&outJsonString);
 		return FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
 	}
 
