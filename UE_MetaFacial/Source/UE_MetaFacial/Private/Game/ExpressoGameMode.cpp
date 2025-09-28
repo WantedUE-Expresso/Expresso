@@ -26,7 +26,7 @@ void AExpressoGameMode::CaptureMetaHuman()
 {
 	SceneCapture->SceneCaptureComponent->CaptureScene();
 	
-	FString path = FPaths::ProjectSavedDir() / TEXT("ScreenShot MetaHuman/"); 
+	FString path = FPaths::ProjectSavedDir() / TEXT("PictureMetaHuman/");
 	FString fileName = TEXT("MetaHuman.png");
 
 	IFileManager::Get().MakeDirectory(*path, true);

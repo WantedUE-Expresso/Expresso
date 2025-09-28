@@ -21,6 +21,7 @@ AMetaHumanSceneCapture::AMetaHumanSceneCapture()
 	SceneCaptureComponent->bCaptureEveryFrame = false;
 	SceneCaptureComponent->TextureTarget = MetaHumanRenderTarget2D;
 	SceneCaptureComponent->CaptureSource = SCS_FinalColorLDR;
+	// SceneCaptureComponent->PostProcessSettings.AutoExposureMet
 }
 
 void AMetaHumanSceneCapture::BeginPlay()
