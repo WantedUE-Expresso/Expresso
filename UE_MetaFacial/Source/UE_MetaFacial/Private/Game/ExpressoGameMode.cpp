@@ -19,3 +19,8 @@ void AExpressoGameMode::SwitchPhase(EMatchPhase Phase)
 	GS->SetPhase(Phase);
 }
 
+bool AExpressoGameMode::HasReceivedResult()
+{
+	return bReceiveResult;
+}
+

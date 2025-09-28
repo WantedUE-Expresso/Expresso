@@ -22,10 +22,10 @@ struct FRoundScore
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	int32 PlayerID;
+	FString PlayerID;
 	
 	UPROPERTY(BlueprintReadOnly)
-	int32 Score;
+	float Score;
 };
 
 UCLASS()

@@ -27,6 +27,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void DeactivateCamera();
 
+	UFUNCTION(BlueprintCallable)
+	bool HasReceivedResult();
+
 	// UFUNCTION()
 
 protected:
@@ -36,4 +39,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ULiveLinkPreset* UnlinkPreset;
+
+	bool bReceiveResult;
 };
