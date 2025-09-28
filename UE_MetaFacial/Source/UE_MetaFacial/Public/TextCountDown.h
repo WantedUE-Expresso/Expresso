@@ -19,6 +19,7 @@ class UE_METAFACIAL_API UTextCountDown : public UUserWidget
 
 public:	// Variables
 	int32 CurrentSeconds = 0.0f;
+	FString Message = TEXT("");
 	FTimerHandle TimerHandle;
 	
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(BindWidget))
@@ -29,7 +30,7 @@ public:	// Variables
 
 public:	// Functions
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void StartCountdown(int32 InSeconds = 5);
+	void StartCountdown(const FString& InMessage, int32 InSeconds = 5);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateCountdown();
