@@ -7,6 +7,7 @@
 
 
 class ULiveLinkPreset;
+class AMetaHumanSceneCapture;
 enum class EMatchPhase : uint8;
 
 UCLASS()
@@ -27,9 +28,14 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void DeactivateCamera();
 
-	// UFUNCTION()
+	UFUNCTION(BlueprintCallable)
+	void CaptureMetaHuman();
 
 protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY()
+	TObjectPtr<AMetaHumanSceneCapture> SceneCapture;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ULiveLinkPreset* LiveLinkPreset;
