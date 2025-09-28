@@ -9,27 +9,27 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTimerFinished);
+
 UCLASS()
 class UE_METAFACIAL_API UTextCountDown : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:	// Variables
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	int32 TotalSeconds = 5.0f;
-
 	int32 CurrentSeconds = 0.0f;
 	FTimerHandle TimerHandle;
 	
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, meta=(BindWidget))
 	TObjectPtr<class UTextBlock> CountText;
 
-public:	// Functions
-	UFUNCTION(BlueprintNativeEvent)
-	void InitializeCountdown(int32 InSeconds = 5.0f);
+	UPROPERTY(BlueprintAssignable)
+	FOnTimerFinished OnTimerFinished;
 
-	UFUNCTION(BlueprintNativeEvent)
-	void StartCountdown();
+public:	// Functions
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void StartCountdown(int32 InSeconds = 5);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void UpdateCountdown();
