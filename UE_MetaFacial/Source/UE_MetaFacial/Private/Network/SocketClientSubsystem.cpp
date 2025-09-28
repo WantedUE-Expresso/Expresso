@@ -1,8 +1,6 @@
 #include "Network/SocketClientSubsystem.h"
 
 #include "IWebSocket.h"
-#include "Json.h"
-#include "JsonUtilities.h"
 #include "SocketSubsystem.h"
 #include "Async/Async.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
@@ -193,7 +191,7 @@ void USocketClientSubsystem::ConnectToServer()
 
 	UE_LOG(NetSocketLog, Warning, TEXT("Connecting to WebSocket - Server: %s, Path: /%s/%s"), *ServerURL, *Path, *ClientID);
 
-	// WebSocket 생성 (올바른 방법: ServerURL과 SubProtocol 분리)
+	// WebSocket 생성
 	webSocket = FWebSocketsModule::Get().CreateWebSocket(ServerURL, SubProtocol);
 
 	if (!webSocket.IsValid())
@@ -218,7 +216,7 @@ void USocketClientSubsystem::OnWebSocketConnected()
 
 	SetConnectionState(ESocketNetworkState::Connected);
 
-	// Runnable 스레드 시작 (UE 권장 패턴)
+	// Worker 스레드 시작
 	bRunThread = true;
 	receiveThread = FRunnableThread::Create(
 		new FSocketReceiveWorker(webSocket, jsonReceiveQueue, bRunThread),
@@ -291,103 +289,83 @@ void USocketClientSubsystem::ProcessReceivedJson(const FString& jsonString)
 
     UE_LOG(NetSocketLog, Log, TEXT("Processing JSON: %s"), *jsonString);
 
-    // 먼저 단일 JSON 객체로 파싱 시도
-    TSharedPtr<FJsonObject> jsonObject;
-    TSharedRef<TJsonReader<>> objectReader = TJsonReaderFactory<>::Create(jsonString);
-
-    if (FJsonSerializer::Deserialize(objectReader, jsonObject) && jsonObject.IsValid())
-    {
-        // 단일 객체 처리
-        ProcessSingleJsonObject(jsonObject);
-        return;
-    }
-
-    // 단일 객체 파싱 실패시 JSON 배열로 시도
-    TArray<TSharedPtr<FJsonValue>> jsonArray;
-    TSharedRef<TJsonReader<>> arrayReader = TJsonReaderFactory<>::Create(jsonString);
-
-    if (FJsonSerializer::Deserialize(arrayReader, jsonArray))
-    {
-        // 배열 처리
-        ProcessJsonArray(jsonArray);
-        return;
-    }
-
-    // 모든 파싱 실패
-    UE_LOG(NetSocketLog, Error, TEXT("Failed to parse JSON as object or array: %s"), *jsonString);
+    // 상태 기반 JSON 파싱으로 위임
+    ProcessJsonByState(jsonString);
 }
 
-void USocketClientSubsystem::ProcessSingleJsonObject(TSharedPtr<FJsonObject> jsonObject)
+void USocketClientSubsystem::ProcessJsonByState(const FString& jsonString)
 {
-    if (!jsonObject.IsValid())
+    // JSON 유효성 먼저 검사
+    if (!UDataParser::IsValidJsonString(jsonString))
     {
+        UE_LOG(NetSocketLog, Error, TEXT("Invalid JSON string received: %s"), *jsonString);
         return;
     }
 
-    UE_LOG(NetSocketLog, Warning, TEXT("--- Processing Single JSON Object ---"));
+    UE_LOG(NetSocketLog, Log, TEXT("Processing JSON by current state: %d"), (int32)CurrentConnectionState);
 
-    // URL 필드 처리
-    FString url;
-    if (jsonObject->TryGetStringField(TEXT("url"), url))
+    switch (CurrentConnectionState)
     {
-        receivedData.url = url;
-        UE_LOG(NetSocketLog, Log, TEXT("Found URL: %s"), *url);
-    }
-
-    // name 필드 처리
-    FString name;
-    if (jsonObject->TryGetStringField(TEXT("name"), name))
-    {
-        receivedData.name = name;
-        UE_LOG(NetSocketLog, Log, TEXT("Found Name: %s"), *name);
-    }
-
-    // 추가 필드들 처리 가능 (향후 확장)
-
-    UE_LOG(NetSocketLog, Warning, TEXT("--- Single Object Processing Complete ---"));
-}
-
-void USocketClientSubsystem::ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& jsonArray)
-{
-    if (jsonArray.Num() == 0)
-    {
-        UE_LOG(NetSocketLog, Warning, TEXT("Received empty JSON array"));
-        return;
-    }
-
-    UE_LOG(NetSocketLog, Warning, TEXT("--- Processing JSON Array (Size: %d) ---"), jsonArray.Num());
-
-    receivedData.url = ""; // 기존 데이터 클리어
-
-    for (int32 i = 0; i < jsonArray.Num(); i++)
-    {
-        const TSharedPtr<FJsonValue>& jsonValue = jsonArray[i];
-        TSharedPtr<FJsonObject>* resultJsonObject;
-
-        if (jsonValue->TryGetObject(resultJsonObject) && resultJsonObject->IsValid())
+        case ESocketNetworkState::Connected:
+        case ESocketNetworkState::Authenticating:
         {
-            UE_LOG(NetSocketLog, Log, TEXT("Processing array item %d"), i);
-
-            // 각 배열 요소를 단일 객체 처리 함수로 처리
-            ProcessSingleJsonObject(*resultJsonObject);
-
-            // 첫 번째 유효한 url을 사용 (기존 호환성)
-            if (receivedData.url.IsEmpty())
+            // 서버 상태/게임 상태 메시지 처리
+            if (UDataParser::IsValidJsonObject(jsonString))
             {
-                FString itemUrl;
-                if (resultJsonObject->Get()->TryGetStringField(TEXT("url"), itemUrl))
-                {
-                    receivedData.url = itemUrl;
-                }
+                // 작성 요망: FReceivedNetState 파싱
+                // UDataParser::DeserializeReceivedNetState(jsonString, receivedData);
+                UE_LOG(NetSocketLog, Warning, TEXT("TODO: Parse FReceivedNetState"));
             }
+            break;
         }
-        else
+
+        case ESocketNetworkState::InLobby:
+        case ESocketNetworkState::InGame:
         {
-            UE_LOG(NetSocketLog, Warning, TEXT("Array item %d is not a valid JSON object"), i);
+            // 게임 데이터 처리 (배열 또는 단일 객체)
+            if (UDataParser::IsValidJsonArray(jsonString))
+            {
+                // 작성 요망: FResultImageData 배열 파싱
+                // TArray<FResultImageData> resultArray;
+                // UDataParser::DeserializeResultImageDataArray(jsonString, resultArray);
+                UE_LOG(NetSocketLog, Warning, TEXT("TODO: Parse FResultImageData Array"));
+            }
+            else if (UDataParser::IsValidJsonObject(jsonString))
+            {
+                // 작성 요망: FNetPayload 파싱
+                // FNetPayload payloadData;
+                // UDataParser::DeserializeNetPayload(jsonString, payloadData);
+                UE_LOG(NetSocketLog, Warning, TEXT("TODO: Parse FNetPayload"));
+            }
+            break;
+        }
+
+        case ESocketNetworkState::GameFinished:
+        {
+            // 게임 결과 데이터 처리
+            // 작성 요망: 최종 결과 파싱 로직
+            UE_LOG(NetSocketLog, Warning, TEXT("TODO: Parse Game Result Data"));
+            break;
+        }
+
+        case ESocketNetworkState::ConnectionError:
+        case ESocketNetworkState::AuthenticationFailed:
+        case ESocketNetworkState::GameSessionError:
+        {
+            // 에러 상태에서는 에러 메시지만 로깅
+            UE_LOG(NetSocketLog, Warning, TEXT("Received JSON in error state (%d): %s"),
+                (int32)CurrentConnectionState, *jsonString);
+            break;
+        }
+
+        default:
+        {
+            // 연결되지 않은 상태에서 JSON 수신 (이상 상황)
+            UE_LOG(NetSocketLog, Warning, TEXT("Received JSON in unexpected state (%d): %s"),
+                (int32)CurrentConnectionState, *jsonString);
+            break;
         }
     }
-
-    UE_LOG(NetSocketLog, Warning, TEXT("--- Array Processing Complete ---"));
 }
 
 bool USocketClientSubsystem::SendMessage(const FString& Message)
@@ -445,14 +423,23 @@ bool USocketClientSubsystem::SendJsonString(const FString& JsonString)
         return false;
     }
 
-    // JSON 유효성 검사 (선택사항)
-    TSharedPtr<FJsonObject> JsonObject;
-    TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
-
-    if (!FJsonSerializer::Deserialize(Reader, JsonObject) || !JsonObject.IsValid())
+    // DataParser를 이용한 JSON 유효성 검사
+    if (!UDataParser::IsValidJsonString(JsonString))
     {
         UE_LOG(NetSocketLog, Warning, TEXT("Sending potentially invalid JSON string: %s"), *JsonString);
     }
 
     return SendMessage(JsonString);
+}
+
+bool USocketClientSubsystem::SendImageData(const FSendImageField& ImageData)
+{
+    FString jsonString = UDataParser::SerializeSendImageField(ImageData);
+    if (jsonString.IsEmpty())
+    {
+        UE_LOG(NetSocketLog, Error, TEXT("Failed to serialize FSendImageField"));
+        return false;
+    }
+
+    return SendMessage(jsonString);
 }

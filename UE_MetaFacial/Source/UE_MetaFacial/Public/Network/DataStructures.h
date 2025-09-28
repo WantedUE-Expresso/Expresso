@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "DataStructures.generated.h"
 
+// Client가 보낼 JSON
 USTRUCT(BlueprintType, Atomic)
 struct UE_METAFACIAL_API FSendImageField
 {
@@ -18,6 +19,7 @@ struct UE_METAFACIAL_API FSendImageField
 	FString base64MetaHumanImage;  // 메타 휴먼 얼굴
 };
 
+// 결과 JSON Parsing
 USTRUCT(BlueprintType, Atomic)
 struct UE_METAFACIAL_API FResultImageData
 {
@@ -32,7 +34,7 @@ struct UE_METAFACIAL_API FResultImageData
 	FString base64MetaHumanImages;
 };
 
-
+// 결과로 받을 JSON
 USTRUCT(BlueprintType, Atomic)
 struct UE_METAFACIAL_API FNetPayload
 {
@@ -45,16 +47,30 @@ struct UE_METAFACIAL_API FNetPayload
 	TArray<FResultImageData> results;
 };
 
+/* 예시
+{
+	"code": "203",
+	"result": "ON",
+	"message": "라운드 1",
+	"stage": [
+		0,
+		"분노"
+	]
+}
+ */
 USTRUCT(BlueprintType, Atomic)
-struct UE_METAFACIAL_API FReceivedNetData
+struct UE_METAFACIAL_API FReceivedNetState
 {
 	GENERATED_USTRUCT_BODY()
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Key")
 	FString name;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Paylaod")
-	FString url;
-	
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Paylaod")
-	//TArray<FNetPayload> payloads;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FString state;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FString result;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FString message;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FString stage;
 };

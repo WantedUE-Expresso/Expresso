@@ -7,6 +7,7 @@
 #include "IWebSocket.h"
 #include "WebSocketsModule.h"
 #include "DataStructures.h"
+#include "DataParser.h"
 #include "SocketClientSubsystem.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(NetSocketLog, Display, Log)
@@ -90,7 +91,7 @@ public:
 	FString ClientID = TEXT("aaa");
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SocketNetwork")
-	FReceivedNetData receivedData;
+	FReceivedNetState receivedData;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SocketNetwork")
 	ESocketNetworkState CurrentConnectionState = ESocketNetworkState::Disconnected;
@@ -109,12 +110,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SocketNetwork")
 	bool SendJsonString(const FString& JsonString);
 
+	// DataParser를 이용한 구조체 전송 편의 함수
+	UFUNCTION(BlueprintCallable, Category = "SocketNetwork")
+	bool SendImageData(const FSendImageField& ImageData);
+
 protected:
 	void ProcessReceivedJson(const FString& jsonString);
 
-	// JSON 처리 유연성 개선을 위한 헬퍼 함수들
-	void ProcessSingleJsonObject(TSharedPtr<FJsonObject> jsonObject);
-	void ProcessJsonArray(const TArray<TSharedPtr<FJsonValue>>& jsonArray);
+	// 상태 기반 JSON 파싱 디스패치 함수
+	UFUNCTION(BlueprintCallable, Category = "SocketNetwork")
+	void ProcessJsonByState(const FString& jsonString);
 
 	// URL 조립 함수
 	FString BuildWebSocketURL() const;
