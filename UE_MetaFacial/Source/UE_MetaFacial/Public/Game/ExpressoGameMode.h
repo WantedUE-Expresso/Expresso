@@ -27,6 +27,8 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void DeactivateCamera();
 
+	// UFUNCTION()
+
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

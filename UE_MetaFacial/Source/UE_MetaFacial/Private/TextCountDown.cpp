@@ -5,18 +5,23 @@
 
 #include "Components/TextBlock.h"
 
-void UTextCountDown::StartCountdown_Implementation(int32 InSeconds)
+void UTextCountDown::StartCountdown_Implementation(const FString& InMessage, int32 InSeconds)
 {
-	FString timerText = FString::Printf(TEXT("%d"), CurrentSeconds);
+	Message = InMessage;
+	CurrentSeconds = InSeconds;
+	
+	FString timerText = FString::Printf(TEXT("%d%s"), CurrentSeconds, *Message);
 	CountText->SetText(FText::FromString(timerText));
 	
-	CurrentSeconds = InSeconds;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UTextCountDown::UpdateCountdown, 1, true);
 }
 
 void UTextCountDown::UpdateCountdown_Implementation()
 {
 	CurrentSeconds--;
+
+	FString timerText = FString::Printf(TEXT("%d%s"), CurrentSeconds, *Message);
+	CountText->SetText(FText::FromString(timerText));
 	
 	if (CurrentSeconds <= 0){
 		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
