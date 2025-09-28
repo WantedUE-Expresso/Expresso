@@ -6,9 +6,6 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(NetHttpLog, Display, Log)
 
-// TODO: HTTP 클라이언트 서브시스템 구현 예정
-// 용도: REST API 통신, 파일 업로드/다운로드, 웹 서비스 연동 등
-// 현재 프로젝트에서는 WebSocket 통신만 사용하므로 미구현 상태
 UCLASS()
 class UE_METAFACIAL_API UHttpClientSubsystem : public UGameInstanceSubsystem
 {
