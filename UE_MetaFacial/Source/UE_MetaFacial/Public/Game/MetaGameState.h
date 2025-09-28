@@ -1,6 +1,4 @@
-﻿
-#pragma once
-
+﻿#pragma once
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "MetaGameState.generated.h"
@@ -8,8 +6,6 @@
 UENUM(BlueprintType)
 enum class EMatchPhase : uint8
 {
-	MainMenu,
-	WaitingForPlayer,
 	RoundReady,
 	RoundBriefing,
 	CameraCapture,
@@ -17,6 +13,8 @@ enum class EMatchPhase : uint8
 	RoundResult,
 	WhoWin
 };
+
+enum class EMatchPhase : uint8;
 
 USTRUCT(BlueprintType)
 struct FRoundScore
@@ -53,7 +51,7 @@ public:
 
 protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Phase, BlueprintReadWrite)
-	EMatchPhase Phase = EMatchPhase::MainMenu;
+	EMatchPhase Phase = EMatchPhase::RoundReady;
 
 	UPROPERTY(ReplicatedUsing=OnRep_Round, BlueprintReadOnly)                                     
 	int32 RoundIndex = 0;
