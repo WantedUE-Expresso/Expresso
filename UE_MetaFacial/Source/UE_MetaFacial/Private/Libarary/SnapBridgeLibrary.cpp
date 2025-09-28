@@ -1,8 +1,9 @@
 
 #include "Libarary/SnapBridgeLibrary.h"
 
+
 bool USnapBridgeLibrary::RunProcessAndWait(const FString& ExecPath, const FString& Arguments, const FString& WorkingDir,
-	int32 TimeoutMs, int32& OutReturnCode)
+                                           int32 TimeoutMs, int32& OutReturnCode)
 {
 	OutReturnCode = -1;
 

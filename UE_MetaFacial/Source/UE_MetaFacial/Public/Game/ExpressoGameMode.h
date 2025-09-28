@@ -5,6 +5,10 @@
 #include "GameFramework/GameModeBase.h"
 #include "ExpressoGameMode.generated.h"
 
+
+class ULiveLinkPreset;
+enum class EMatchPhase : uint8;
+
 UCLASS()
 class UE_METAFACIAL_API AExpressoGameMode : public AGameModeBase
 {
@@ -12,8 +16,22 @@ class UE_METAFACIAL_API AExpressoGameMode : public AGameModeBase
 
 public:
 
-	// 배치(or EXE)파일 실행하고 끝날 때까지 대기, ReturnCode 반환.
+	AExpressoGameMode();
+
+	UFUNCTION(BlueprintCallable)
+	void SwitchPhase(EMatchPhase Phase);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void ActivateCamera();
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void DeactivateCamera();
+
+protected:
 	
-	
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ULiveLinkPreset* LiveLinkPreset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	ULiveLinkPreset* UnlinkPreset;
 };

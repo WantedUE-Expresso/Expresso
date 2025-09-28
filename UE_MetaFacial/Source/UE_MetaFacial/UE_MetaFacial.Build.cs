@@ -13,7 +13,8 @@ public class UE_MetaFacial : ModuleRules
 			"Core", "CoreUObject", "Engine", 
 			"LiveLink", "LiveLinkInterface", "LiveLinkAnimationCore",
 			"ControlRig", "AnimationBlueprintLibrary",
-			"Networking", "Sockets", "HTTP", "Json", "JsonUtilities"
+			"Networking", "Sockets", "HTTP", "Json", "JsonUtilities",
+			"UMG"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
