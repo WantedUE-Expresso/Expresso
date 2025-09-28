@@ -58,4 +58,10 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_Scores, BlueprintReadOnly)
 	TArray<FRoundScore> Scores;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Player1Win = 0;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 Player2Win = 0;
 };
