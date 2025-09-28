@@ -11,7 +11,11 @@ class UE_METAFACIAL_API UMetaFacialGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	void StartGame();	
+
+	UFUNCTION(BlueprintCallable)
+	void StartGame();
+
+	UFUNCTION(BlueprintCallable)
 	void FinishGame();
 	
 };
