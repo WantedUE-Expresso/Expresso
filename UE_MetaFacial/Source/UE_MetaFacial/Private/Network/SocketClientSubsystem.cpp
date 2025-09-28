@@ -153,7 +153,7 @@ bool USocketClientSubsystem::CanTransitionTo(ESocketNetworkState NewState) const
 		case ESocketNetworkState::Connected:
 			return (NewState == ESocketNetworkState::Disconnected ||
 					NewState == ESocketNetworkState::Authenticating ||
-					NewState == ESocketNetworkState::InLobby ||
+					NewState == ESocketNetworkState::GameStarted ||
 					NewState == ESocketNetworkState::ConnectionError);
 
 		case ESocketNetworkState::ConnectionError:
@@ -162,9 +162,9 @@ bool USocketClientSubsystem::CanTransitionTo(ESocketNetworkState NewState) const
 
 		// 게임 세션 상태들 (향후 확장 가능)
 		case ESocketNetworkState::Authenticating:
-		case ESocketNetworkState::InLobby:
-		case ESocketNetworkState::InGame:
-		case ESocketNetworkState::GamePaused:
+		case ESocketNetworkState::GameStarted:
+		case ESocketNetworkState::RoundStarted:
+		case ESocketNetworkState::RoundFinished:
 		case ESocketNetworkState::GameFinished:
 		case ESocketNetworkState::AuthenticationFailed:
 		case ESocketNetworkState::GameSessionError:
@@ -319,8 +319,8 @@ void USocketClientSubsystem::ProcessJsonByState(const FString& jsonString)
             break;
         }
 
-        case ESocketNetworkState::InLobby:
-        case ESocketNetworkState::InGame:
+        case ESocketNetworkState::GameStarted:
+        case ESocketNetworkState::RoundStarted:
         {
             // 게임 데이터 처리 (배열 또는 단일 객체)
             if (UDataParser::IsValidJsonArray(jsonString))
@@ -339,7 +339,14 @@ void USocketClientSubsystem::ProcessJsonByState(const FString& jsonString)
             }
             break;
         }
-
+		case ESocketNetworkState::Capturing:
+        {
+			break;	        
+        }
+		case ESocketNetworkState::RoundFinished:
+        {
+			break;   
+        }
         case ESocketNetworkState::GameFinished:
         {
             // 게임 결과 데이터 처리

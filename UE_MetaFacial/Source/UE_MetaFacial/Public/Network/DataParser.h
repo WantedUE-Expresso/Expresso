@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Json.h"
-#include "JsonUtilities.h"
+
 #include "DataStructures.h"
 #include "DataParser.generated.h"
 
@@ -61,11 +60,12 @@ public:
 	static bool IsValidJsonArray(const FString& JsonString);
 
 	// C++ 전용 헬퍼 함수들
-	static TSharedPtr<FJsonObject> ParseJsonObject(const FString& JsonString);
-	static TArray<TSharedPtr<FJsonValue>> ParseJsonArray(const FString& JsonString);
+	static TSharedPtr<FJsonObject> ParseJsonObject(const FString& inJsonString);
+	static TArray<TSharedPtr<FJsonValue>> ParseJsonArray(const FString& inJsonString);
+	
 
 private:
 	// 내부 헬퍼 함수들
-	static bool SerializeStructToJson(const void* StructPtr, const UStruct* StructDef, FString& OutJsonString);
+	static bool SerializeStructToJson(const void* StructPtr, const UStruct* StructDef, FString& outJsonString);
 	static bool DeserializeJsonToStruct(const FString& JsonString, void* StructPtr, const UStruct* StructDef);
 };

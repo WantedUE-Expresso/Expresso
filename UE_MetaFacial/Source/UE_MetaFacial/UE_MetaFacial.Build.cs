@@ -16,7 +16,7 @@ public class UE_MetaFacial : ModuleRules
 			"Networking", "Sockets", "HTTP", "Json", "JsonUtilities", "UMG"
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "WebSockets" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "WebSockets", "ImageWrapper" });
 		
 		PublicIncludePaths.Add(ModuleDirectory);
 
