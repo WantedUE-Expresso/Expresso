@@ -3,6 +3,8 @@
 #include "GameFramework/GameStateBase.h"
 #include "MetaGameState.generated.h"
 
+class UDataExchangeComponent;
+
 UENUM(BlueprintType)
 enum class EMatchPhase : uint8
 {
@@ -39,6 +41,8 @@ class UE_METAFACIAL_API AMetaGameState : public AGameStateBase
 	GENERATED_BODY()
 
 public:
+	AMetaGameState();
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void SetPhase(EMatchPhase InPhase);
@@ -67,6 +71,9 @@ public:
 
 	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadWrite)
 	TArray<FRoundWinCnt> WinCnt;
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UDataExchangeComponent* GetDataExchangeComp() {return DataExChangeComponent;}
+
 
 protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Phase, BlueprintReadWrite)
@@ -75,6 +82,11 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Round, BlueprintReadOnly)                                     
 	int32 RoundIndex = 1;
 
+	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadOnly)
+	TArray<FRoundWinCnt> WinCnt;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UDataExchangeComponent* DataExChangeComponent = nullptr;
 	
 
 	

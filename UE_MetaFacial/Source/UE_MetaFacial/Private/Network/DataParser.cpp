@@ -20,16 +20,21 @@ FString UDataParser::SerializeSendImageField(const FSendImageField& Data)
 
 bool UDataParser::SerializeToJsonString(const FSendImageField& Data, FString& OutJsonString)
 {
+	UE_LOG(DataParserLog, Warning, TEXT("SerializeToJsonString called with id: %s"), *Data.id);
+
 	TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 
 	JsonObject->SetStringField(TEXT("id"), Data.id);
 	JsonObject->SetStringField(TEXT("base64RealHumanImage"), Data.base64RealHumanImage);
 	JsonObject->SetStringField(TEXT("base64MetaHumanImage"), Data.base64MetaHumanImage);
 
+	UE_LOG(DataParserLog, Warning, TEXT("JsonObject created with fields - id: %s, realImage length: %d, metaImage length: %d"),
+		*Data.id, Data.base64RealHumanImage.Len(), Data.base64MetaHumanImage.Len());
+
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutJsonString);
 	if (FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer))
 	{
-		UE_LOG(DataParserLog, Log, TEXT("Successfully serialized FSendImageField"));
+		UE_LOG(DataParserLog, Warning, TEXT("Successfully serialized FSendImageField: %s"), *OutJsonString);
 		return true;
 	}
 
@@ -43,6 +48,8 @@ bool UDataParser::SerializeToJsonString(const FSendImageField& Data, FString& Ou
 
 bool UDataParser::DeserializeReceivedNetState(const FString& JsonString, FReceivedNetState& OutData)
 {
+	UE_LOG(DataParserLog, Warning, TEXT("DeserializeReceivedNetState called with: %s"), *JsonString);
+
 	TSharedPtr<FJsonObject> JsonObject = ParseJsonObject(JsonString);
 	if (!JsonObject.IsValid())
 	{
@@ -50,26 +57,37 @@ bool UDataParser::DeserializeReceivedNetState(const FString& JsonString, FReceiv
 		return false;
 	}
 
-	JsonObject->TryGetStringField(TEXT("code"), OutData.state);
-	JsonObject->TryGetStringField(TEXT("result"), OutData.result);
-	JsonObject->TryGetStringField(TEXT("message"), OutData.message);
-	JsonObject->TryGetStringField(TEXT("name"), OutData.name);
+	UE_LOG(DataParserLog, Warning, TEXT("JsonObject parsed successfully"));
 
+	bool bCodeResult = JsonObject->TryGetStringField(TEXT("code"), OutData.code);
+	UE_LOG(DataParserLog, Warning, TEXT("Code extraction result: %s, Value: %s"), bCodeResult ? TEXT("Success") : TEXT("Failed"), *OutData.code);
+
+	bool bStatusResult = JsonObject->TryGetStringField(TEXT("status"), OutData.status);
+	UE_LOG(DataParserLog, Warning, TEXT("Status extraction result: %s, Value: %s"), bStatusResult ? TEXT("Success") : TEXT("Failed"), *OutData.status);
+
+	bool bMessageResult = JsonObject->TryGetStringField(TEXT("message"), OutData.message);
+	UE_LOG(DataParserLog, Warning, TEXT("Message extraction result: %s, Value: %s"), bMessageResult ? TEXT("Success") : TEXT("Failed"), *OutData.message);
+	const TSharedPtr<FJsonObject>* infoObject;
+	JsonObject->TryGetObjectField(TEXT("info"), infoObject);
+
+	if (!infoObject->IsValid())
+	{
+		return true;
+	}
+	UE_LOG(DataParserLog, Log, TEXT("Successfully deserialized FReceivedNetState - Code: %s"), *OutData.code);
 	const TArray<TSharedPtr<FJsonValue>>* StageArray;
-	if (JsonObject->TryGetArrayField(TEXT("stage"), StageArray) && StageArray->Num() > 0)
+	if ((*infoObject)->TryGetArrayField(TEXT("stage"), StageArray) && StageArray->Num() > 0)
 	{
 		if (StageArray->Num() > 1)
 		{
 			FString StageValue;
 			if ((*StageArray)[1]->TryGetString(StageValue))
 			{
-				OutData.stage = StageValue;
+				OutData.info = StageValue;
 			}
 		}
 	}
 
-	UE_LOG(DataParserLog, Log, TEXT("Successfully deserialized FReceivedNetState - Code: %s, Result: %s"),
-		*OutData.state, *OutData.result);
 	return true;
 }
 

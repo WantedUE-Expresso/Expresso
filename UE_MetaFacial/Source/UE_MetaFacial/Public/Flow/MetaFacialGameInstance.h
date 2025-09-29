@@ -26,4 +26,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FRoundWinCnt> WinCnt;
 	
+
+	UPROPERTY(EditAnywhere)
+	bool ReadyToStart = false;
 };

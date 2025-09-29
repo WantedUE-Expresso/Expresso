@@ -62,19 +62,29 @@ public:
 	FORCEINLINE bool IsReady() {return bReadyForResult;}
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE FString GetStageInfo() {return stage;}
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UTexture2D* GetMyMetaHumanImage() const {return myMetaHumanTexture;}
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UTexture2D* GetOpponentMetaHumanImage() const {return opponentMetaHumanTexture;}
 	
 
 protected:
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* DecodeBase64ToImage(const FString& inBase64String);
 	UFUNCTION(BlueprintCallable)
-	bool EncodeImageToBase64(const UTexture2D* inPngImage, FString& outBase64String);
+	bool EncodeImageToBase64(FString& outBase64String, FString& outRealHumanBase64String);
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+protected:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image|Path")
 	FString myFaceImageName = "Webcam/snap.png";
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image|Path")
 	FString myMetaHumanImageName = "PictureMetaHuman/MetaHuman.png";
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Image|Texture2D")
+	UTexture2D* myMetaHumanTexture = nullptr;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Image|Texture2D")
+	UTexture2D* opponentMetaHumanTexture = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString stage;
