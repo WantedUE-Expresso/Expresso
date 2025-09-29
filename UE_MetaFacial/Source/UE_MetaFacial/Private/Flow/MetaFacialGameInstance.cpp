@@ -7,6 +7,7 @@
 void UMetaFacialGameInstance::StartGame()
 {
 	UGameplayStatics::OpenLevel(GetWorld(), FName("MetaFacialMap"));
+	UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<USocketClientSubsystem>()->ConnectToServer();
 }
 
 void UMetaFacialGameInstance::FinishGame()
@@ -16,7 +17,6 @@ void UMetaFacialGameInstance::FinishGame()
 
 void UMetaFacialGameInstance::AddToWinCnt(const FString& InID)
 {
-
 	PlayerInfo.PlayerID = InID;
 	UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<USocketClientSubsystem>()->ClientID = InID;
 	PlayerInfo.WinCnt = 0;

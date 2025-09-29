@@ -88,7 +88,6 @@ TStatId USocketClientSubsystem::GetStatId() const
 void USocketClientSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	ConnectToServer();
 }
 
 void USocketClientSubsystem::Deinitialize()
