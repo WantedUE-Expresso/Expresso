@@ -87,6 +87,18 @@ bool UDataParser::DeserializeReceivedNetState(const FString& JsonString, FReceiv
 			}
 		}
 	}
+	const TArray<TSharedPtr<FJsonValue>>* ResultArray;
+	if ((*infoObject)->TryGetArrayField(TEXT("stage"), ResultArray) && ResultArray->Num() > 0)
+	{
+		if (ResultArray->Num() > 1)
+		{
+			FString StageValue;
+			if ((*ResultArray)[1]->TryGetString(StageValue))
+			{
+				OutData.info = StageValue;
+			}
+		}
+	}
 
 	return true;
 }
