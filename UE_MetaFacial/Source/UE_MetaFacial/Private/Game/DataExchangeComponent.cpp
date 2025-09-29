@@ -36,6 +36,7 @@ bool UDataExchangeComponent::ReceiveRoundResultData(TArray<FRoundResultData>& ou
 
 void UDataExchangeComponent::SendRoundData()
 {
+	
 }
 
 UTexture2D* UDataExchangeComponent::DecodeBase64ToImage(const FString& inBase64String)

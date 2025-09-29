@@ -23,6 +23,16 @@ void AMetaGameState::SetPhase(EMatchPhase InPhase)
 	}
 }
 
+void AMetaGameState::SetRound(int32 InRound)
+{
+	RoundIndex = InRound;
+}
+
+int32 AMetaGameState::GetRound()
+{
+	return RoundIndex;
+}
+
 void AMetaGameState::OnRep_Phase()
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
@@ -36,6 +46,6 @@ void AMetaGameState::OnRep_Round()
 {
 }
 
-void AMetaGameState::OnRep_Scores()
+void AMetaGameState::OnRep_WinCnt()
 {
 }

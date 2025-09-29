@@ -17,7 +17,7 @@ enum class EMatchPhase : uint8
 enum class EMatchPhase : uint8;
 
 USTRUCT(BlueprintType)
-struct FRoundScore
+struct FRoundWinCnt
 {
 	GENERATED_BODY()
 
@@ -25,7 +25,7 @@ struct FRoundScore
 	FString PlayerID;
 	
 	UPROPERTY(BlueprintReadOnly)
-	float Score;
+	float WinCnt;
 };
 
 UCLASS()
@@ -37,6 +37,13 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void SetPhase(EMatchPhase InPhase);
+
+	UFUNCTION(BlueprintCallable)
+	void SetRound(int32 InRound);
+	
+	UFUNCTION(BlueprintCallable)
+	int32 GetRound();
+	
 	
 	UFUNCTION()
 	void OnRep_Phase();
@@ -45,23 +52,17 @@ public:
 	void OnRep_Round();
 
 	UFUNCTION()
-	void OnRep_Scores();
+	void OnRep_WinCnt();
 
-	
 
 protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Phase, BlueprintReadWrite)
 	EMatchPhase Phase = EMatchPhase::RoundReady;
 
 	UPROPERTY(ReplicatedUsing=OnRep_Round, BlueprintReadOnly)                                     
-	int32 RoundIndex = 0;
+	int32 RoundIndex = 1;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Scores, BlueprintReadOnly)
-	TArray<FRoundScore> Scores;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 Player1Win = 0;
-
-	UPROPERTY(BlueprintReadWrite)
-	int32 Player2Win = 0;
+	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadOnly)
+	TArray<FRoundWinCnt> WinCnt;
+	
 };
