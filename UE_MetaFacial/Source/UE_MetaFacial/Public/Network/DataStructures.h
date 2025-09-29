@@ -62,15 +62,12 @@ USTRUCT(BlueprintType, Atomic)
 struct UE_METAFACIAL_API FReceivedNetState
 {
 	GENERATED_USTRUCT_BODY()
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Key")
-	FString name;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	FString state;
+	FString code;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	FString result;
+	FString status;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
 	FString message;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
-	FString stage;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Payload")
+	FString info;
 };
