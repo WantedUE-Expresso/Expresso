@@ -82,9 +82,6 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Round, BlueprintReadOnly)                                     
 	int32 RoundIndex = 1;
 
-	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadOnly)
-	TArray<FRoundWinCnt> WinCnt;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	UDataExchangeComponent* DataExChangeComponent = nullptr;
 	
