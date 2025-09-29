@@ -26,6 +26,11 @@ struct FRoundWinCnt
 	
 	UPROPERTY(BlueprintReadOnly)
 	float WinCnt;
+
+	bool operator==(const FRoundWinCnt& Other) const
+	{
+		return PlayerID == Other.PlayerID;
+	}
 };
 
 UCLASS()
@@ -43,6 +48,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	int32 GetRound();
+
+	UFUNCTION(BlueprintCallable)
+	void AddToWinCnt(const FString& InID);
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseWinCnt(FString ID);
 	
 	
 	UFUNCTION()
@@ -54,6 +65,8 @@ public:
 	UFUNCTION()
 	void OnRep_WinCnt();
 
+	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadWrite)
+	TArray<FRoundWinCnt> WinCnt;
 
 protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Phase, BlueprintReadWrite)
@@ -62,7 +75,8 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Round, BlueprintReadOnly)                                     
 	int32 RoundIndex = 1;
 
-	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadOnly)
-	TArray<FRoundWinCnt> WinCnt;
+	
+
+	
 	
 };

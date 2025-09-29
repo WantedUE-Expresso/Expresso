@@ -33,6 +33,19 @@ int32 AMetaGameState::GetRound()
 	return RoundIndex;
 }
 
+void AMetaGameState::AddToWinCnt(const FString& InID)
+{
+	FRoundWinCnt cnt;
+	cnt.PlayerID = InID;
+	cnt.WinCnt = 0;
+	WinCnt.AddUnique(cnt);
+}
+
+void AMetaGameState::IncreaseWinCnt(FString ID)
+{
+	
+}
+
 void AMetaGameState::OnRep_Phase()
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();

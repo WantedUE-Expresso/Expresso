@@ -5,6 +5,8 @@
 #include "MetaFacialGameInstance.generated.h"
 
 
+struct FRoundWinCnt;
+
 UCLASS()
 class UE_METAFACIAL_API UMetaFacialGameInstance : public UGameInstance
 {
@@ -17,5 +19,11 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishGame();
+	
+	UFUNCTION(BlueprintCallable)
+	void AddToWinCnt(const FString& InID);
+
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FRoundWinCnt> WinCnt;
 	
 };
