@@ -35,7 +35,7 @@ enum class ESocketNetworkState : uint8
 	GameSessionError	UMETA(DisplayName = "Game Session Error")
 };
 
-class FSocketReceiveWorker : public FRunnable
+/*class FSocketReceiveWorker : public FRunnable
 {
 public:
 	FSocketReceiveWorker(TSharedPtr<IWebSocket> InSocket, TQueue<FString>& InReceiveQueue, FThreadSafeBool& InRunThread);
@@ -58,7 +58,7 @@ private:
 	// WebSocket 메시지 임시 저장용 (내부 관리)
 	TQueue<FString> webSocketMessageQueue;
 	FThreadSafeCounter pendingMessages;
-};
+};*/
 
 UCLASS()
 class UE_METAFACIAL_API USocketClientSubsystem : public UGameInstanceSubsystem, public FTickableGameObject
@@ -115,6 +115,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "SocketNetwork")
 	bool SendImageData(const FSendImageField& ImageData);
 
+	// 테스트용 함수들
+	UFUNCTION(BlueprintCallable, CallInEditor, Category = "SocketNetwork")
+	bool SendTestMessage();
+
 protected:
 	void ProcessReceivedJson(const FString& jsonString);
 
@@ -144,10 +148,13 @@ protected:
 
 	UFUNCTION()
 	void OnWebSocketClosed(int32 StatusCode, const FString& Reason, bool bWasClean);
+
+	UFUNCTION()
+	void OnWebSocketMessage(const FString& Message);
 	
 private:
 	TSharedPtr<IWebSocket> webSocket;
-	FRunnableThread* receiveThread;
+	FRunnableThread* receiveThread = nullptr;
 	FThreadSafeBool bRunThread;
 	TQueue<FString> jsonReceiveQueue;
 
