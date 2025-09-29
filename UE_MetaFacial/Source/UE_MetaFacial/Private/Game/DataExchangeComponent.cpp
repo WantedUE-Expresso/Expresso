@@ -3,6 +3,8 @@
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
 #include "ImageUtils.h"
+#include "Flow/MetaFacialGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 #include "Network/SocketClientSubsystem.h"
 
 DEFINE_LOG_CATEGORY(DataExchangeLog);
@@ -38,7 +40,10 @@ bool UDataExchangeComponent::ReceiveRoundResultData(TArray<FRoundResultData>& ou
 
 void UDataExchangeComponent::SendRoundData()
 {
-	
+	FSendImageField sendingData;
+	sendingData.id = UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<USocketClientSubsystem>()->ClientID;
+	EncodeImageToBase64(sendingData.base64MetaHumanImage, sendingData.base64RealHumanImage);
+	UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<USocketClientSubsystem>()->SendImageData(sendingData);
 }
 
 UTexture2D* UDataExchangeComponent::DecodeBase64ToImage(const FString& inBase64String)
@@ -120,7 +125,7 @@ UTexture2D* UDataExchangeComponent::DecodeBase64ToImage(const FString& inBase64S
 	return texture;
 }
 
-bool UDataExchangeComponent::EncodeImageToBase64(const UTexture2D* inPngImage, FString& outBase64String)
+bool UDataExchangeComponent::EncodeImageToBase64(FString& outMetaHumanBase64String, FString& outRealHumanBase64String)
 {
 	if (myFaceImageName.IsEmpty() || myMetaHumanImageName.IsEmpty())
 	{
@@ -143,6 +148,22 @@ bool UDataExchangeComponent::EncodeImageToBase64(const UTexture2D* inPngImage, F
 		return false;
 	}
 	
-	outBase64String = FBase64::Encode(imageBuffer, EBase64Mode::Standard);
+	outRealHumanBase64String = FBase64::Encode(imageBuffer, EBase64Mode::Standard);
+
+	FString metaHumanPath = FPaths::Combine(FPaths::ProjectSavedDir(), myMetaHumanImageName);
+	if (!IFileManager::Get().FileExists(*metaHumanPath))
+	{
+		UE_LOG(DataExchangeLog, Display, TEXT("Image File is not existed"));
+		return false;
+	}
+
+	// 압축 파일로 보내게 되는데.. 이거 어떻게하지.. 원시 데이터는 좀 클거같은데..
+	TArray<uint8> imageMetaHumanBuffer;
+	if (!FFileHelper::LoadFileToArray(imageMetaHumanBuffer, *metaHumanPath))
+	{
+		UE_LOG(DataExchangeLog, Display, TEXT("Can not Load Image File to Binary Data"));
+		return false;
+	}
+	outMetaHumanBase64String = FBase64::Encode(imageMetaHumanBuffer, EBase64Mode::Standard);
 	return true;
 }

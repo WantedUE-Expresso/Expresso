@@ -17,5 +17,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void FinishGame();
-	
+
+	UPROPERTY(EditAnywhere)
+	bool ReadyToStart = false;
 };

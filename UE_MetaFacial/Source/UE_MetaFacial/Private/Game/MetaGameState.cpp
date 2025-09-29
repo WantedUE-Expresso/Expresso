@@ -1,8 +1,15 @@
 ﻿
 #include "Game/MetaGameState.h"
+
+#include "Game/DataExchangeComponent.h"
 #include "Game/MetaPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
+
+AMetaGameState::AMetaGameState()
+{
+	DataExChangeComponent = CreateDefaultSubobject<UDataExchangeComponent>(TEXT("DataExchange"));
+}
 
 void AMetaGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {

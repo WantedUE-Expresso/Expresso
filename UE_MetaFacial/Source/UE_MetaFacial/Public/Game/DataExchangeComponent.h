@@ -73,7 +73,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	UTexture2D* DecodeBase64ToImage(const FString& inBase64String);
 	UFUNCTION(BlueprintCallable)
-	bool EncodeImageToBase64(const UTexture2D* inPngImage, FString& outBase64String);
+	bool EncodeImageToBase64(FString& outBase64String, FString& outRealHumanBase64String);
 
 protected:	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Image|Path")

@@ -3,7 +3,11 @@
 #include "IWebSocket.h"
 #include "SocketSubsystem.h"
 #include "Async/Async.h"
+#include "Flow/MetaFacialGameInstance.h"
+#include "Game/DataExchangeComponent.h"
+#include "Game/MetaGameState.h"
 #include "Interfaces/IPv4/IPv4Endpoint.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(NetSocketLog)
 
@@ -325,25 +329,32 @@ void USocketClientSubsystem::ProcessJsonByState(const FString& jsonString)
         {
             if (UDataParser::IsValidJsonObject(jsonString))
             {
-                UE_LOG(NetSocketLog, Warning, TEXT("Calling DeserializeReceivedNetState..."));
-                bool bResult = UDataParser::DeserializeReceivedNetState(jsonString, receivedData);
-                UE_LOG(NetSocketLog, Warning, TEXT("DeserializeReceivedNetState result: %s"), bResult ? TEXT("Success") : TEXT("Failed"));
-                UE_LOG(NetSocketLog, Warning, TEXT("Parsed Data - Code: %s, Status: %s, Message: %s"),
-                    *receivedData.code, *receivedData.status, *receivedData.message);
+                if (UDataParser::DeserializeReceivedNetState(jsonString, receivedData))
+                {
+	                SetConnectionState(ESocketNetworkState::Authenticating);
+                }
             }
             break;
         }
         case ESocketNetworkState::Authenticating:
         {
-            // 서버 상태/게임 상태 메시지 처리
             if (UDataParser::IsValidJsonObject(jsonString))
             {
                 UDataParser::DeserializeReceivedNetState(jsonString, receivedData);
+            	if (receivedData.code == "202")
+            	{
+            		Cast<UMetaFacialGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->ReadyToStart = true;
+            		SetConnectionState(ESocketNetworkState::RoundStarted);
+            	}
             }
             break;
         }
 
         case ESocketNetworkState::GameStarted:
+	        {
+		        
+	        }
+    		break;
         case ESocketNetworkState::RoundStarted:
         {
             // 게임 데이터 처리 (배열 또는 단일 객체)
@@ -365,17 +376,31 @@ void USocketClientSubsystem::ProcessJsonByState(const FString& jsonString)
         }
 		case ESocketNetworkState::Capturing:
         {
+        	GetWorld()->GetGameState<AMetaGameState>()->GetDataExchangeComp()->SendRoundData();
 			break;	        
         }
 		case ESocketNetworkState::RoundFinished:
         {
+        	if (UDataParser::IsValidJsonObject(jsonString))
+        	{
+        		if (UDataParser::DeserializeReceivedNetState(jsonString, receivedData))
+        		{
+        			TArray<FRoundResultData> roundResults;
+        			roundResults.AddDefaulted(2);
+        			//roundResults[0] = receivedData.info;
+        			//GetWorld()->GetGameState<AMetaGameState>()->GetDataExchangeComp()->ReceiveRoundResultData(receivedData);
+        		}
+        	}
 			break;   
         }
         case ESocketNetworkState::GameFinished:
         {
-            // 게임 결과 데이터 처리
-            // 작성 요망: 최종 결과 파싱 로직
-            UE_LOG(NetSocketLog, Warning, TEXT("TODO: Parse Game Result Data"));
+        		if (UMetaFacialGameInstance* gi = Cast<UMetaFacialGameInstance>(UGameplayStatics::GetGameInstance(GetWorld())))
+        		{
+        			gi->ReadyToStart = false;
+        		}
+        		//gi->FinishGame();
+        		
             break;
         }
 
@@ -409,11 +434,11 @@ bool USocketClientSubsystem::SendMessage(const FString& Message)
         return false;
     }
 
-    if (!IsInState(ESocketNetworkState::Connected))
+    /*if (!IsInState(ESocketNetworkState::Connected))
     {
         UE_LOG(NetSocketLog, Error, TEXT("Cannot send message: Not connected (State: %d)"), (int32)CurrentConnectionState);
         return false;
-    }
+    }*/
 
     if (Message.IsEmpty())
     {
