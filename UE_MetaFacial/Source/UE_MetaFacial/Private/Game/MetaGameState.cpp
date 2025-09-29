@@ -42,10 +42,12 @@ int32 AMetaGameState::GetRound()
 
 void AMetaGameState::AddToWinCnt(const FString& InID)
 {
+	/*
 	FRoundWinCnt cnt;
 	cnt.PlayerID = InID;
 	cnt.WinCnt = 0;
 	WinCnt.AddUnique(cnt);
+	*/
 }
 
 void AMetaGameState::IncreaseWinCnt(FString ID)

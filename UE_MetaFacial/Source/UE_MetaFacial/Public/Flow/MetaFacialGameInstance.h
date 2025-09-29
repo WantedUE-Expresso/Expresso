@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Game/MetaGameState.h"
 #include "MetaFacialGameInstance.generated.h"
 
 
@@ -25,8 +26,11 @@ public:
 
 	UPROPERTY(BlueprintReadOnly)
 	TArray<FRoundWinCnt> WinCnt;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRoundWinCnt PlayerInfo; 
 	
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	bool ReadyToStart = false;
 };

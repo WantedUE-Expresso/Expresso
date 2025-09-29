@@ -71,6 +71,10 @@ public:
 
 	UPROPERTY(ReplicatedUsing=OnRep_WinCnt, BlueprintReadWrite)
 	TArray<FRoundWinCnt> WinCnt;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRoundWinCnt PlayerInfo;
+	
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UDataExchangeComponent* GetDataExchangeComp() {return DataExChangeComponent;}
 
