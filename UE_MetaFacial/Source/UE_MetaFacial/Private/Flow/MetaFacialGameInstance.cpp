@@ -2,6 +2,7 @@
 
 #include "Game/MetaGameState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Network/SocketClientSubsystem.h"
 
 void UMetaFacialGameInstance::StartGame()
 {
@@ -16,6 +17,7 @@ void UMetaFacialGameInstance::FinishGame()
 void UMetaFacialGameInstance::AddToWinCnt(const FString& InID)
 {
 	FRoundWinCnt cnt;
+	UGameplayStatics::GetGameInstance(GetWorld())->GetSubsystem<USocketClientSubsystem>()->ClientID = InID;
 	cnt.PlayerID = InID;
 	cnt.WinCnt = 0;
 	WinCnt.AddUnique(cnt);
