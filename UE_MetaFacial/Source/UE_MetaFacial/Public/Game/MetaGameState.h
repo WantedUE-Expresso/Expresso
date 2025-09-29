@@ -74,6 +74,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FRoundWinCnt PlayerInfo;
+
+	UPROPERTY(BlueprintReadWrite)
+	FRoundWinCnt OtherInfo;
 	
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE UDataExchangeComponent* GetDataExchangeComp() {return DataExChangeComponent;}
